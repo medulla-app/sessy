@@ -1,0 +1,134 @@
+<%= render layout: "sessy/sources/layout", locals: { source: @source, active: :overview } do %>
+  <% if @source.messages.none? %>
+    <div class="mb-6 py-3 px-4 border border-zinc-950/10 dark:border-white/10 text-sm">
+      <p class="font-medium">Ready to receive events</p>
+      <p class="text-zinc-500 dark:text-zinc-400 mt-1">
+        Configure AWS SES to send events to your webhook URL.
+        <%= link_to "View setup instructions", source_setup_path(@source), class: "underline" %>
+      </p>
+    </div>
+  <% end %>
+
+  <div class="space-y-8">
+    <section>
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm font-medium">Last 30 days</h2>
+      </div>
+      <div class="mt-3 border border-zinc-950/10 dark:border-white/10 p-4">
+        <%= render "sessy/sources/overview_chart", chart_data: @chart_data, chart_max: @chart_max %>
+      </div>
+
+      <p class="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
+        <%= number_with_delimiter(@sent_count) %> sent
+        <span class="text-zinc-300 dark:text-zinc-600">&middot;</span>
+        <%= number_with_delimiter(@delivered_count) %> delivered
+        <% if @bounce_count.positive? %>
+          <span class="text-zinc-300 dark:text-zinc-600">&middot;</span>
+          <span class="<%= @bounce_rate > 5 ? 'text-rose-600 dark:text-rose-400' : '' %>"><%= number_to_percentage(@bounce_rate, precision: 1) %> bounced</span>
+        <% end %>
+        <% if @complaint_count.positive? %>
+          <span class="text-zinc-300 dark:text-zinc-600">&middot;</span>
+          <span class="<%= @complaint_rate > 0.1 ? 'text-rose-600 dark:text-rose-400' : '' %>"><%= pluralize(@complaint_count, "complaint") %></span>
+        <% end %>
+        <% if @unique_open_count.positive? %>
+          <span class="text-zinc-300 dark:text-zinc-600">&middot;</span>
+          <%= number_to_percentage(@open_rate, precision: 1) %> opened
+        <% end %>
+        <% if @unique_click_count.positive? %>
+          <span class="text-zinc-300 dark:text-zinc-600">&middot;</span>
+          <%= number_to_percentage(@click_rate, precision: 1) %> clicked
+        <% end %>
+      </p>
+    </section>
+
+    <section>
+      <div class="grid grid-cols-2 lg:grid-cols-3">
+        <div class="border-b border-r border-zinc-950/5 dark:border-white/5 py-3 pr-4">
+          <div class="text-sm text-zinc-500 dark:text-zinc-400">Sent</div>
+          <div class="text-xl font-semibold tabular-nums mt-0.5"><%= number_with_delimiter(@sent_count) %></div>
+          <div class="text-sm text-zinc-400 dark:text-zinc-500 tabular-nums">today: <%= number_with_delimiter(@sent_today_count) %></div>
+        </div>
+
+        <div class="border-b border-zinc-950/5 dark:border-white/5 py-3 pl-4 lg:border-r lg:pr-4">
+          <div class="text-sm text-zinc-500 dark:text-zinc-400">Delivered</div>
+          <div class="text-xl font-semibold tabular-nums mt-0.5"><%= number_with_delimiter(@delivered_count) %></div>
+        </div>
+
+        <div class="border-b border-r border-zinc-950/5 dark:border-white/5 py-3 pr-4 lg:border-r-0 lg:pl-4">
+          <div class="text-sm text-zinc-500 dark:text-zinc-400">Bounces</div>
+          <div class="text-xl font-semibold tabular-nums mt-0.5"><%= number_with_delimiter(@bounce_count) %></div>
+          <div class="text-sm text-zinc-400 dark:text-zinc-500 tabular-nums"><%= number_to_percentage(@bounce_rate, precision: 1) %></div>
+        </div>
+
+        <div class="border-b border-zinc-950/5 dark:border-white/5 py-3 pl-4 lg:pl-0 lg:pr-4 lg:border-b-0 lg:border-r">
+          <div class="text-sm text-zinc-500 dark:text-zinc-400">Complaints</div>
+          <div class="text-xl font-semibold tabular-nums mt-0.5"><%= number_with_delimiter(@complaint_count) %></div>
+          <div class="text-sm text-zinc-400 dark:text-zinc-500 tabular-nums"><%= number_to_percentage(@complaint_rate, precision: 2) %></div>
+        </div>
+
+        <div class="border-b border-r border-zinc-950/5 dark:border-white/5 py-3 pr-4 lg:pl-4 lg:border-b-0 lg:pr-4">
+          <div class="text-sm text-zinc-500 dark:text-zinc-400">Opens</div>
+          <div class="text-xl font-semibold tabular-nums mt-0.5"><%= number_with_delimiter(@unique_open_count) %></div>
+          <div class="text-sm text-zinc-400 dark:text-zinc-500 tabular-nums"><%= number_to_percentage(@open_rate, precision: 1) %> rate</div>
+        </div>
+
+        <div class="py-3 pl-4">
+          <div class="text-sm text-zinc-500 dark:text-zinc-400">Clicks</div>
+          <div class="text-xl font-semibold tabular-nums mt-0.5"><%= number_with_delimiter(@unique_click_count) %></div>
+          <div class="text-sm text-zinc-400 dark:text-zinc-500 tabular-nums"><%= number_to_percentage(@click_rate, precision: 2) %> rate</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid gap-6 lg:grid-cols-2">
+      <div>
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-medium">Bounces</h3>
+          <span class="text-sm text-zinc-400 dark:text-zinc-500 tabular-nums"><%= number_to_percentage(@bounce_rate, precision: 1) %></span>
+        </div>
+
+        <% if @bounce_count.positive? %>
+          <div class="mt-3 space-y-2">
+            <% @bounce_breakdown.sort_by { |_, count| -count }.each do |bounce_type, count| %>
+              <% percentage = @bounce_count.positive? ? (count.to_f / @bounce_count) * 100 : 0 %>
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-zinc-600 dark:text-zinc-300"><%= bounce_label(bounce_type) %></span>
+                <span class="text-zinc-400 dark:text-zinc-500 tabular-nums"><%= number_with_delimiter(count) %></span>
+              </div>
+              <div class="h-px bg-zinc-100 dark:bg-white/5">
+                <div class="h-px bg-rose-400 dark:bg-rose-500" style="width: <%= percentage.round(1) %>%"></div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="mt-3 text-sm text-zinc-400 dark:text-zinc-500">No bounces in the last 30 days.</p>
+        <% end %>
+      </div>
+
+      <div>
+        <h3 class="text-sm font-medium">Open & click tracking</h3>
+        <% if @open_count.positive? || @click_count.positive? %>
+          <div class="mt-3 grid grid-cols-2 gap-4">
+            <div class="bg-zinc-50 dark:bg-white/5 p-3">
+              <div class="text-sm text-zinc-500 dark:text-zinc-400">Opens</div>
+              <div class="text-xl font-semibold tabular-nums mt-0.5"><%= number_with_delimiter(@open_count) %></div>
+              <div class="text-sm text-zinc-400 dark:text-zinc-500 tabular-nums"><%= number_with_delimiter(@unique_open_count) %> unique</div>
+            </div>
+            <div class="bg-zinc-50 dark:bg-white/5 p-3">
+              <div class="text-sm text-zinc-500 dark:text-zinc-400">Clicks</div>
+              <div class="text-xl font-semibold tabular-nums mt-0.5"><%= number_with_delimiter(@click_count) %></div>
+              <div class="text-sm text-zinc-400 dark:text-zinc-500 tabular-nums"><%= number_with_delimiter(@unique_click_count) %> unique</div>
+            </div>
+          </div>
+          <p class="mt-3 text-sm text-zinc-400 dark:text-zinc-500">
+            Requires open/click tracking enabled in SES.
+          </p>
+        <% else %>
+          <p class="mt-3 text-sm text-zinc-400 dark:text-zinc-500">
+            No open or click events in the last 30 days. Enable tracking in SES to see these metrics.
+          </p>
+        <% end %>
+      </div>
+    </section>
+  </div>
+<% end %>

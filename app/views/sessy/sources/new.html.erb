@@ -1,0 +1,47 @@
+<div class="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+  <div class="mb-4 flex items-center gap-2 text-sm">
+    <%= link_to "Sources", sources_path, class: "text-zinc-400 hover:text-zinc-900 dark:text-zinc-500 dark:hover:text-zinc-100" %>
+    <span class="text-zinc-300 dark:text-zinc-600">/</span>
+    <span class="font-medium">New</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div>
+      <%= form_with model: @source do |f| %>
+        <% if @source.errors.any? %>
+          <div class="mb-4 py-2 px-3 border border-red-300 dark:border-red-500/30 text-sm text-red-600 dark:text-red-400">
+            <ul role="list" class="list-disc list-inside">
+              <% @source.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="mb-4">
+          <%= f.label :name, "Source name", class: "block text-sm font-medium mb-1" %>
+          <%= f.text_field :name, class: "w-full border border-zinc-950/10 dark:border-white/10 bg-transparent px-2.5 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-950/20 dark:focus:ring-white/20", placeholder: "e.g., BetaList, My App", autofocus: true %>
+        </div>
+
+        <div class="mb-4">
+          <%= render "color_picker", f: f %>
+        </div>
+
+        <div>
+          <%= f.submit "Create Source", class: "px-2.5 py-1.5 text-sm border border-zinc-950/10 dark:border-white/10 hover:bg-zinc-50 dark:hover:bg-white/5 cursor-pointer" %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="text-sm text-zinc-500 dark:text-zinc-400 space-y-4">
+      <div>
+        <h3 class="font-medium text-zinc-900 dark:text-zinc-100">What's a source?</h3>
+        <p class="mt-1">A source is a separate inbox for tracking email events. Each source has its own webhook URL.</p>
+      </div>
+      <div>
+        <h3 class="font-medium text-zinc-900 dark:text-zinc-100">How many do I need?</h3>
+        <p class="mt-1">Start with one per project. Split later if you want to separate transactional vs marketing emails.</p>
+      </div>
+    </div>
+  </div>
+</div>

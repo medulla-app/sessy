@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html class="antialiased">
+  <head>
+    <title><%= content_for(:title) || "Sessy" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Sessy">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="<%= asset_path("icon.png") %>" type="image/png">
+    <link rel="icon" href="<%= asset_path("icon.svg") %>" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="<%= asset_path("icon.png") %>">
+
+    <%= stylesheet_link_tag "sessy", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "sessy/highlight-github-dark", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
+    <div class="isolate">
+      <%= render "layouts/header" %>
+
+      <main>
+        <%= yield %>
+      </main>
+    </div>
+  </body>
+</html>

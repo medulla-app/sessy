@@ -1,0 +1,25 @@
+# Adapter is switchable so the suite can run on both SQLite (default) and
+# Postgres: set SESSY_DB=postgresql (optionally DATABASE_URL) to use Postgres.
+<% if ENV["SESSY_DB"] == "postgresql" %>
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  url: <%= ENV.fetch("DATABASE_URL", "postgres://localhost/sessy_dummy_test") %>
+
+test:
+  <<: *default
+<% else %>
+default: &default
+  adapter: sqlite3
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+
+development:
+  <<: *default
+  database: storage/development.sqlite3
+
+test:
+  <<: *default
+  database: storage/test.sqlite3
+<% end %>

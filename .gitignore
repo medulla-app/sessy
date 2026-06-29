@@ -1,0 +1,12 @@
+/.bundle/
+/Gemfile.lock
+/pkg/
+/tmp/
+/log/*
+!/log/.keep
+
+# Dummy app
+/test/dummy/db/*.sqlite3
+/test/dummy/storage/
+/test/dummy/log/*
+/test/dummy/tmp/*

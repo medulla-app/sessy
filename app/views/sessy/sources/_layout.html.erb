@@ -1,0 +1,8 @@
+<div class="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+  <%= render "sessy/sources/breadcrumb", source: source %>
+  <%= render "sessy/sources/tabs", source: source, active: active %>
+
+  <div class="mt-5">
+    <%= yield %>
+  </div>
+</div>

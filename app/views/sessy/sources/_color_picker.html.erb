@@ -1,0 +1,11 @@
+<fieldset>
+  <legend class="block text-sm font-medium mb-1.5">Color</legend>
+  <div class="flex gap-1.5">
+    <% Sessy::Source::Colors::ALL.each do |color| %>
+      <label class="cursor-pointer">
+        <%= f.radio_button :color, color, class: "peer sr-only" %>
+        <span class="block size-6 rounded-full <%= Sessy::Source::Colors::CLASSES[color] %> peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-zinc-400 dark:peer-checked:ring-offset-zinc-950"></span>
+      </label>
+    <% end %>
+  </div>
+</fieldset>
