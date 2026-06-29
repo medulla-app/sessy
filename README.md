@@ -64,7 +64,8 @@ end
 3. Pick a token. Either create a source in the dashboard, or — for a zero-setup
    single-source deploy — set `Sessy.auto_source_token = ENV["SESSY_SOURCE_TOKEN"]`
    and the source is created automatically on the first webhook. Any other unknown
-   token still 404s.
+   token still 404s. Set `Sessy.auto_source_retention_days` to bound how long that
+   source keeps events (otherwise it retains them indefinitely).
 4. Subscribe the SNS topic (HTTPS) to `https://<host>/sessy/webhooks/<token>`. Sessy
    auto-confirms the subscription.
 

@@ -49,6 +49,7 @@ module Sessy
 
     test "the configured auto_source_token provisions a source on first contact" do
       Sessy.auto_source_token = "secret-token"
+      Sessy.auto_source_retention_days = 90
 
       assert_difference -> { Source.count } => 1, -> { Event.count } => 1 do
         post webhook_path("secret-token"),
@@ -56,9 +57,12 @@ module Sessy
           headers: { "CONTENT_TYPE" => "application/json" }
       end
       assert_response :ok
-      assert_equal "Default", Source.find_by(token: "secret-token").name
+      source = Source.find_by(token: "secret-token")
+      assert_equal "Default", source.name
+      assert_equal 90, source.retention_days
     ensure
       Sessy.auto_source_token = nil
+      Sessy.auto_source_retention_days = nil
     end
 
     test "an unknown token does not provision when it isn't the configured one" do

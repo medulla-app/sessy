@@ -17,6 +17,10 @@ module Sessy
 
     attr_writer :auto_source_name
 
+    # Retention applied to an auto-provisioned source (days). Without it the
+    # source keeps every event forever, so set this to bound retention.
+    attr_accessor :auto_source_retention_days
+
     def parent_controller
       @parent_controller ||= "ActionController::Base"
     end

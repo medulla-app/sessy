@@ -23,7 +23,7 @@ class Source < ApplicationRecord
   def self.provision(token)
     return nil unless token.present? && token == Sessy.auto_source_token
 
-    create!(token: token, name: Sessy.auto_source_name)
+    create!(token: token, name: Sessy.auto_source_name, retention_days: Sessy.auto_source_retention_days)
   rescue ActiveRecord::RecordNotUnique
     find_by(token: token)
   end
