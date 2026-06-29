@@ -35,9 +35,8 @@ module Sessy
     private
 
     def set_source
-      @source = Source.find_by!(token: params[:source_token])
-    rescue ActiveRecord::RecordNotFound
-      head :not_found
+      @source = Source.for_webhook(params[:source_token])
+      head :not_found unless @source
     end
 
     def handle_notification(sns_message)

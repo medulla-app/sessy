@@ -46,5 +46,32 @@ module Sessy
         headers: { "CONTENT_TYPE" => "application/json" }
       assert_response :not_found
     end
+
+    test "the configured auto_source_token provisions a source on first contact" do
+      Sessy.auto_source_token = "secret-token"
+
+      assert_difference -> { Source.count } => 1, -> { Event.count } => 1 do
+        post webhook_path("secret-token"),
+          params: sns_notification(ses_delivery_event).to_json,
+          headers: { "CONTENT_TYPE" => "application/json" }
+      end
+      assert_response :ok
+      assert_equal "Default", Source.find_by(token: "secret-token").name
+    ensure
+      Sessy.auto_source_token = nil
+    end
+
+    test "an unknown token does not provision when it isn't the configured one" do
+      Sessy.auto_source_token = "secret-token"
+
+      assert_no_difference -> { Source.count } do
+        post webhook_path("not-the-secret"),
+          params: sns_notification(ses_delivery_event).to_json,
+          headers: { "CONTENT_TYPE" => "application/json" }
+      end
+      assert_response :not_found
+    ensure
+      Sessy.auto_source_token = nil
+    end
   end
 end

@@ -10,8 +10,19 @@ module Sessy
     # Optional callable run as a before_action on dashboard requests.
     attr_accessor :authenticate
 
+    # When set, a webhook arriving with this exact token auto-creates its source
+    # on first contact, so single-source deploys need no manual setup. Any other
+    # unknown token still 404s, so the endpoint stays safe to expose.
+    attr_accessor :auto_source_token
+
+    attr_writer :auto_source_name
+
     def parent_controller
       @parent_controller ||= "ActionController::Base"
+    end
+
+    def auto_source_name
+      @auto_source_name ||= "Default"
     end
 
     def configure

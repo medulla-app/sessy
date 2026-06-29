@@ -61,7 +61,10 @@ end
 
 1. Create an SES configuration set with an SNS event destination.
 2. Stamp outgoing mail with `X-SES-CONFIGURATION-SET: <your-set>`.
-3. Create a source in the dashboard to get its token.
+3. Pick a token. Either create a source in the dashboard, or — for a zero-setup
+   single-source deploy — set `Sessy.auto_source_token = ENV["SESSY_SOURCE_TOKEN"]`
+   and the source is created automatically on the first webhook. Any other unknown
+   token still 404s.
 4. Subscribe the SNS topic (HTTPS) to `https://<host>/sessy/webhooks/<token>`. Sessy
    auto-confirms the subscription.
 
