@@ -17,12 +17,19 @@ module Sessy
 
     attr_writer :auto_source_name
 
+    # Path the host app mounts the public SNS webhook at (without the token).
+    attr_writer :webhook_path
+
     # Retention applied to an auto-provisioned source (days). Without it the
     # source keeps every event forever, so set this to bound retention.
     attr_accessor :auto_source_retention_days
 
     def parent_controller
       @parent_controller ||= "ActionController::Base"
+    end
+
+    def webhook_path
+      @webhook_path ||= "/sessy/webhooks"
     end
 
     def auto_source_name

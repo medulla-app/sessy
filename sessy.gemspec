@@ -34,4 +34,5 @@ Gem::Specification.new do |spec|
 
   # SES event ingestion over SNS (signature verification).
   spec.add_dependency "aws-sdk-sns"
+  spec.add_dependency "csv"
 end

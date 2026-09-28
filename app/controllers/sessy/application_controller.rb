@@ -2,6 +2,8 @@ module Sessy
   class ApplicationController < Sessy.parent_controller.constantize
     include Pagy::Method
 
+    helper LocalTimeHelper, Sessy::ApplicationHelper, Sessy::EventsHelper, Sessy::SourcesHelper
+
     before_action :authenticate_sessy_request
 
     private
