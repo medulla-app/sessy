@@ -34,5 +34,16 @@ module Sessy
       assert event.event_type_bounce?
       assert event.permanent_bounce?
     end
+
+    test "opens and clicks are stamped when they happened, not when the mail was sent" do
+      %w[Open Click].each do |type|
+        Event.ingest(EventPayload.new(ses_engagement_event(type, at: "2026-01-02T09:30:00.000Z")), source: @source)
+        Event.ingest(EventPayload.new(ses_engagement_event(type, at: "2026-01-03T10:00:00.000Z")), source: @source)
+
+        events = Event.where(event_type: type).order(:event_at)
+        assert_equal [ Time.utc(2026, 1, 2, 9, 30), Time.utc(2026, 1, 3, 10) ], events.map(&:event_at)
+        assert_equal "192.0.2.1", events.first.event_data["ipAddress"]
+      end
+    end
   end
 end

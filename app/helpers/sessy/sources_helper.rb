@@ -8,6 +8,10 @@ module SourcesHelper
     "#{source.name.parameterize}-ses-events"
   end
 
+  def source_webhook_url(source)
+    "#{request.base_url}#{Sessy.webhook_path}/#{source.token}"
+  end
+
   def bounce_label(bounce_type)
     case bounce_type
     when "Permanent"

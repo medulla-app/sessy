@@ -51,7 +51,7 @@
       <ol class="list-decimal list-inside space-y-1.5 text-zinc-600 dark:text-zinc-300">
         <li>From the SNS topic, click <strong>Create subscription</strong></li>
         <li>Protocol: <strong>HTTPS</strong></li>
-        <li>Endpoint: <code class="bg-zinc-100 dark:bg-white/5 px-1 font-mono text-sm break-all"><%= webhook_url(source_token: @source.token) %></code></li>
+        <li>Endpoint: <code class="bg-zinc-100 dark:bg-white/5 px-1 font-mono text-sm break-all"><%= source_webhook_url(@source) %></code></li>
         <li>Leave filter policy empty</li>
         <li>Leave <strong>"Enable raw message delivery"</strong> unchecked</li>
         <li>Click <strong>Create subscription</strong></li>
@@ -61,7 +61,7 @@
       <pre class="text-xs overflow-x-auto"><code class="language-shell" data-controller="highlight">aws sns subscribe \
   --topic-arn arn:aws:sns:&lt;region&gt;:&lt;account-id&gt;:<%= sns_topic_name(@source) %> \
   --protocol https \
-  --notification-endpoint "<%= webhook_url(source_token: @source.token) %>" \
+  --notification-endpoint "<%= source_webhook_url(@source) %>" \
   --region &lt;region&gt;</code></pre>
     </section>
 
