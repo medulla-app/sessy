@@ -36,6 +36,20 @@ module SesPayloads
     }
   end
 
+  def ses_engagement_event(type, message_id: "msg-open", recipient: "a@example.com", at: "2026-01-02T09:30:00.000Z")
+    {
+      "eventType" => type,
+      "mail" => {
+        "messageId" => message_id,
+        "source" => "from@example.com",
+        "timestamp" => "2026-01-01T00:00:00.000Z",
+        "destination" => [ recipient ],
+        "commonHeaders" => { "subject" => "Hello" }
+      },
+      type.downcase => { "timestamp" => at, "ipAddress" => "192.0.2.1", "userAgent" => "Mail" }
+    }
+  end
+
   # The SNS envelope delivered to the webhook endpoint.
   def sns_notification(event, message_id: "sns-1")
     {
